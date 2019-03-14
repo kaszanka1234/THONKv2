@@ -14,12 +14,4 @@ namespace THONK.Database {
             Options.UseSqlite("Data Source=db.sqlite");
         }
     }
-    public class GuildData {
-        public string Prefix { get; set; }
-        public SocketTextChannel GeneralChannel { get; set; }
-        public SocketTextChannel AnnouncementsChannel { get; set; }
-        public SocketTextChannel BotLogChannel { get; set; }
-        public SocketTextChannel LogChannel { get; set; }
-        public Dictionary<long,GuildUsers> Users { get; set; }
-    }
 }
