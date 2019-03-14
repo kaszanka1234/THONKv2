@@ -4,24 +4,19 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using THONK.Services;
+using THONK.Configuration;
 using THONK.Database;
+using THONK.Services;
 
 namespace THONK {
     public class Bot {
-
-        public IConfigurationRoot Configuration { get; }
+        
+        public Config Configuration {get;set;}
 
         public Bot(string[] args) {
-
-            var builder = new ConfigurationBuilder();
-            Dictionary<string, string> config = new Dictionary<string, string>{
-                {"prefix", "/" }
-            };
-            builder.AddInMemoryCollection(config);
-            Configuration = builder.Build();
+            Configuration = new Config();
+            Configuration[488843604731887641].Prefix="/";
         }
 
         public static async Task RunAsync(string[] args) {

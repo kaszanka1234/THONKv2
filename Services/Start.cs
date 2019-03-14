@@ -13,9 +13,9 @@ namespace THONK.Services{
         private readonly CommandService _commands;
         private readonly IConfigurationRoot _config;
 
-        public Start(IServiceProvider services, DiscordSocketClient client, CommandService commands, IConfigurationRoot config){
+        public Start(IServiceProvider services, DiscordSocketClient client, CommandService commands){
             _services = services;
-            _config = config;
+            //_config = config;
             _client = client;
             _commands = commands;
         }
