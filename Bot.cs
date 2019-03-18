@@ -34,6 +34,8 @@ namespace THONK {
             provider.GetRequiredService<RPUpdater>();
 
             await provider.GetRequiredService<Start>().StartAsync();
+
+            provider.GetRequiredService<ConfigLoader>().LoadAll();
             await Task.Delay(-1);
         }
 
@@ -51,6 +53,7 @@ namespace THONK {
             .AddSingleton<Logging>()
             .AddSingleton<Start>()
             .AddSingleton<RPUpdater>()
+            .AddSingleton<ConfigLoader>()
             .AddSingleton(Configuration)
         ;
     }

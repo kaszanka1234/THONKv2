@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Discord.WebSocket;
 
 namespace THONK.Database {
-    public class SQLiteDBContextStore : DbContext {
+    public class SQLiteDBContext : DbContext {
         public DbSet<GuildsConfig> GuildConfigs { get; set; }
         public DbSet<GuildUsers> GuildUsers { get; set; }
 

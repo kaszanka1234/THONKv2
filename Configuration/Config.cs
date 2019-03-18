@@ -9,13 +9,17 @@ namespace THONK.Configuration{
         public IConfigMember this[ulong key]{
             get{
                 if(!members.Keys.Contains(key)){
-                    return new ConfigMember();
+                    members[key] = new ConfigMember();
                 }
                 return members[key];
             }
             set{
                 members[key] = (ConfigMember)value;
             }
+        }
+        public IConfigMember Current(){
+            //ulong id;
+            return new ConfigMember();
         }
         public Config(){
             members = new Dictionary<ulong, ConfigMember>();
@@ -27,16 +31,23 @@ namespace THONK.Configuration{
         SocketTextChannel _announcements;
         SocketTextChannel _botLog;
         SocketTextChannel _log;
+
+        public ConfigMember(){
+            _prefix = "/";
+            _general = null;
+            _announcements = null;
+            _botLog = null;
+            _log = null;
+        }
         
         string IConfigMember.Prefix{
             get{
-                if(_prefix==null||_prefix==""){
-                    return "/";
-                }else{
-                    return _prefix;
-                }
+                return _prefix;
             }
             set{
+                if(string.IsNullOrEmpty(value)){
+                    throw new Exception("Prefix cannot be empty");
+                }
                 _prefix = value;
             }
         }

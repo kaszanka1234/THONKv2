@@ -5,10 +5,10 @@ namespace THONK.Database {
         [Key]
         public ulong GuildID { get; set; }
         public string Prefix { get; set; }
-        public ulong ChannelGeneral { get; set; }
-        public ulong ChannelAnnouncements { get; set; }
-        public ulong ChannelBotLog { get; set; }
-        public ulong ChannelLog { get; set; }
+        public ulong GeneralChannel { get; set; }
+        public ulong AnnouncementsChannel { get; set; }
+        public ulong BotLogChannel { get; set; }
+        public ulong LogChannel { get; set; }
     }
     public class UserRecord {
         [Key]

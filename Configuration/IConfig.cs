@@ -5,6 +5,7 @@ using System;
 namespace THONK.Configuration{
     public interface IConfig{
         IConfigMember this[ulong key] {get;set;}
+        IConfigMember Current();
     }
     public interface IConfigMember{
         string Prefix { get; set;}
