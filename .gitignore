@@ -1,4 +1,7 @@
+/.vscode
 /bin
+/Migrations
 /obj
 /Properties
-/.vscode
+
+/db.sqlite
