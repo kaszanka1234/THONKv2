@@ -13,5 +13,9 @@ namespace THONK.Database {
         protected override void OnConfiguring(DbContextOptionsBuilder Options) {
             Options.UseSqlite("Data Source=db.sqlite");
         }
+
+        protected override void OnModelCreating(ModelBuilder builder){
+            //
+        }
     }
 }
