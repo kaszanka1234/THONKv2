@@ -9,25 +9,87 @@ namespace THONK.CommandModules{
     public class Configuration : ModuleBase<SocketCommandContext>{
 
         private IConfig _config {get;set;}
-        private THONK.Services.ConfigLoader _services {get;set;}
+        private THONK.Services.ConfigLoader _loader {get;set;}
 
         [Group("get")]
         public class Get : Configuration{
-            //new private IConfig _config;
             
             [Command("prefix")]
             public async Task Prefix(){
                 await Context.Channel.SendMessageAsync($"current prefix is: \"{_config[Context.Guild.Id].Prefix}\"");
             }
 
+            [Group("channel")]
+            public class Channel : Get{
+                
+                [Command("general")]
+                public async Task General(){
+                    var channel = _config[Context.Guild.Id].GeneralChannel;
+                    if(channel==null){
+                        await Send(false,"General");
+                    }else{
+                        await Send(true,"General",channel.Mention);
+                    }
+                }
+
+                [Command("announcements")]
+                public async Task Announcements(){
+                    var channel = _config[Context.Guild.Id].AnnouncementsChannel;
+                    if(channel==null){
+                        await Send(false,"Announcements");
+                    }else{
+                        await Send(true,"Announcements",channel.Mention);
+                    }
+                }
+
+                [Command("bot log"),Alias("botlog")]
+                public async Task BotLog(){
+                    var channel = _config[Context.Guild.Id].BotLogChannel;
+                    if(channel==null){
+                        await Send(false,"Bot log");
+                    }else{
+                        await Send(true,"Bot log",channel.Mention);
+                    }
+                }
+
+                [Command("log")]
+                public async Task Log(){
+                    var channel = _config[Context.Guild.Id].LogChannel;
+                    if(channel==null){
+                        await Send(false,"Log");
+                    }else{
+                        await Send(true,"Log",channel.Mention);
+                    }
+                }
+
+                public async Task Send(bool isSet, string channelName, string channelMention=""){
+                    string msg = $"No channel set as {channelName}";
+                    if(isSet){
+                        msg = $"{channelName} channel is {channelMention}";
+                    }
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                [Command("")]
+                new public async Task Usage(){
+                    var p = _config[Context.Guild.Id].Prefix;
+                    string msg = $"usage:\n{p}config get channel general\n{p}config get channel announcements\n{p}config get channel bot log\n{p}config get channel log";
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                public Channel(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+                    _config = config;
+                }
+            }
+
             [Command("")]
             new public async Task Usage(){
-                var p = this._config[Context.Guild.Id].Prefix;
-                string msg = $"usage:\n{p}config get prefix";
+                var p = _config[Context.Guild.Id].Prefix;
+                string msg = $"usage:\n{p}config get prefix\n{p}config get channel";
                 await Context.Channel.SendMessageAsync(msg);
             }
-            public Get(Config config, THONK.Services.ConfigLoader services) : base(config,services){
-                this._config = config;
+            public Get(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+                _config = config;
             }
         }
 
@@ -46,14 +108,79 @@ namespace THONK.CommandModules{
                 await Context.Channel.SendMessageAsync(msg);
             }
 
-            public Set(Config config, THONK.Services.ConfigLoader services):base(config,services){
+            [Group("channel")]
+            public class Channel : Set{
+                
+                [Command("general")]
+                public async Task General(SocketTextChannel channel=null){
+                    string msg;
+                    if(channel==null){
+                        _config[Context.Guild.Id].GeneralChannel = Context.Channel as SocketTextChannel;
+                        msg = $"{(Context.Channel as SocketTextChannel).Mention} sucessfully set as General channel";
+                    }else{
+                        _config[Context.Guild.Id].GeneralChannel = channel;
+                        msg = $"{channel.Mention} sucessfully set as General channel";
+                    }
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                [Command("announcements")]
+                public async Task Announcements(SocketTextChannel channel=null){
+                    string msg;
+                    if(channel==null){
+                        _config[Context.Guild.Id].AnnouncementsChannel = Context.Channel as SocketTextChannel;
+                        msg = $"{(Context.Channel as SocketTextChannel).Mention} sucessfully set as Announcements channel";
+                    }else{
+                        _config[Context.Guild.Id].AnnouncementsChannel = channel;
+                        msg = $"{channel.Mention} sucessfully set as Announcements channel";
+                    }
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                [Command("bot log"),Alias("botlog")]
+                public async Task BotLog(SocketTextChannel channel=null){
+                    string msg;
+                    if(channel==null){
+                        _config[Context.Guild.Id].BotLogChannel = Context.Channel as SocketTextChannel;
+                        msg = $"{(Context.Channel as SocketTextChannel).Mention} sucessfully set as Bot log channel";
+                    }else{
+                        _config[Context.Guild.Id].BotLogChannel = channel;
+                        msg = $"{channel.Mention} sucessfully set as Bot log channel";
+                    }
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                [Command("log")]
+                public async Task Log(SocketTextChannel channel=null){
+                    string msg;
+                    if(channel==null){
+                        _config[Context.Guild.Id].LogChannel = Context.Channel as SocketTextChannel;
+                        msg = $"{(Context.Channel as SocketTextChannel).Mention} sucessfully set as Log channel";
+                    }else{
+                        _config[Context.Guild.Id].LogChannel = channel;
+                        msg = $"{channel.Mention} sucessfully set as Log channel";
+                    }
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                new public async Task Usage(){
+                    string msg = $"a";
+                    await Context.Channel.SendMessageAsync(msg);
+                }
+
+                public Channel(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+                    _config = config;
+                }
+            }
+
+            public Set(Config config, THONK.Services.ConfigLoader loader):base(config,loader){
                 _config = config;
             }
         }
 
         [Command("save")]
         public async Task Save(){
-            _services.SaveGuildConfig(Context.Guild.Id);
+            _loader.SaveGuildConfig(Context.Guild.Id);
             await Context.Channel.SendMessageAsync("success");
         }
 
@@ -64,9 +191,9 @@ namespace THONK.CommandModules{
             await Context.Channel.SendMessageAsync(msg);
         }
 
-        public Configuration(Config config, THONK.Services.ConfigLoader services){
+        public Configuration(Config config, THONK.Services.ConfigLoader loader){
             _config = config;
-            _services = services;
+            _loader = loader;
         }
     }
 }
