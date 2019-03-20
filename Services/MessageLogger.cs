@@ -41,8 +41,8 @@ namespace THONK.Services{
                 IMessage msg = cached.Value;
                 if(string.IsNullOrEmpty(msg.Content)) return;
                 builder.WithTitle($"Message edited in {(messageChannel as SocketTextChannel).Mention}");
-                builder.AddField("before",msg.Content);
-                builder.AddField("after",newMessage.Content);
+                builder.AddField("Before",msg.Content);
+                builder.AddField("After",newMessage.Content);
             }
             await channel.SendMessageAsync("",false,builder.Build());
         }
