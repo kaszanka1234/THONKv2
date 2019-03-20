@@ -33,6 +33,7 @@ namespace THONK {
             provider.GetRequiredService<CommandHandler>();
             provider.GetRequiredService<RPUpdater>();
             provider.GetRequiredService<MessageLogger>();
+            provider.GetRequiredService<UserLogger>();
 
             await provider.GetRequiredService<Start>().StartAsync();
 
@@ -56,6 +57,7 @@ namespace THONK {
             .AddSingleton<RPUpdater>()
             .AddSingleton<ConfigLoader>()
             .AddSingleton<MessageLogger>()
+            .AddSingleton<UserLogger>()
             .AddSingleton(Configuration)
         ;
     }
