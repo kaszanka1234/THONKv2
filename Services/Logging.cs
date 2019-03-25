@@ -18,13 +18,19 @@ namespace THONK.Services{
             _commands = commands;
             _client.Log += LogAsync;
         }
+
+        // Main logging method
         private Task LogAsync(LogMessage msg){
+            // Create new directory for logs in a file system if it doesn't exist
             if(!Directory.Exists(_logDirectory)){
                 Directory.CreateDirectory(_logDirectory);
             }
+            // Create a file for today if it doesn't exist and release it so other resources can use it
             if(!File.Exists(_logFile)){
                 File.Create(_logFile).Dispose();
             }
+
+            // format messages in console
             var cc = Console.ForegroundColor;
             switch (msg.Severity)
             {
@@ -43,11 +49,14 @@ namespace THONK.Services{
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
             }
+            // append date, severity, source to log message
             string logging = $"{DateTime.Now,-19} [{msg.Severity,8}] {msg.Source}: {msg.Message}";
             Console.ForegroundColor = cc;
+            // Write the message to log file
             using (StreamWriter s = new StreamWriter(_logFile,true)){
                 s.WriteLineAsync(logging);
             }
+            // return Task that logs message to console
             return Console.Out.WriteLineAsync(logging);
         }
     }

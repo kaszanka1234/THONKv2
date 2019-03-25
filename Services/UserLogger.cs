@@ -6,10 +6,15 @@ using Discord.WebSocket;
 using THONK.Configuration;
 
 namespace THONK.Services{
+
+    // TODO
+    //
+    // documentation
+    // xD
     public class UserLogger{
 
         DiscordSocketClient _client {get;}
-        Config _config {get;}
+        IConfig _config {get;}
 
         async Task GuildMemberUpdated(SocketGuildUser before, SocketGuildUser after){
             if(_config[before.Guild.Id].BotLogChannel==null) return;
@@ -44,7 +49,7 @@ namespace THONK.Services{
             }
         }
 
-        public UserLogger(Config config, DiscordSocketClient client){
+        public UserLogger(IConfig config, DiscordSocketClient client){
             _config = config;
             _client = client;
             _client.GuildMemberUpdated += GuildMemberUpdated;

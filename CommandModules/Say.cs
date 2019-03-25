@@ -7,7 +7,7 @@ namespace THONK.CommandModules{
 
     public class Say : ModuleBase<SocketCommandContext> {
 
-        THONK.Configuration.Config _config {get;}
+        THONK.Configuration.IConfig _config {get;}
 
         [Command("say"),RequireUserPermission(Discord.GuildPermission.ManageMessages)]
         public async Task Echo([Remainder] string msg){
@@ -24,7 +24,7 @@ namespace THONK.CommandModules{
             await channel.SendMessageAsync(msg);
         }
 
-        public Say(THONK.Configuration.Config config){
+        public Say(THONK.Configuration.IConfig config){
             _config = config;
         }
     }

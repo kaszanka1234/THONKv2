@@ -7,10 +7,10 @@ using THONK.Database;
 
 namespace THONK.Services{
     public class ConfigLoader{
-        private Config _config {get;set;}
+        private IConfig _config {get;set;}
         private readonly DiscordSocketClient _client;
 
-        public ConfigLoader(DiscordSocketClient client, Config config){
+        public ConfigLoader(DiscordSocketClient client, IConfig config){
             _config = config;
             _client = client;
         }

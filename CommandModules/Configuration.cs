@@ -77,7 +77,7 @@ namespace THONK.CommandModules{
                     await Context.Channel.SendMessageAsync(msg);
                 }
 
-                public Channel(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+                public Channel(IConfig config, THONK.Services.ConfigLoader loader) : base(config,loader){
                     _config = config;
                 }
             }
@@ -88,7 +88,7 @@ namespace THONK.CommandModules{
                 string msg = $"usage:\n{p}config get prefix\n{p}config get channel";
                 await Context.Channel.SendMessageAsync(msg);
             }
-            public Get(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+            public Get(IConfig config, THONK.Services.ConfigLoader loader) : base(config,loader){
                 _config = config;
             }
         }
@@ -168,12 +168,12 @@ namespace THONK.CommandModules{
                     await Context.Channel.SendMessageAsync(msg);
                 }
 
-                public Channel(Config config, THONK.Services.ConfigLoader loader) : base(config,loader){
+                public Channel(IConfig config, THONK.Services.ConfigLoader loader) : base(config,loader){
                     _config = config;
                 }
             }
 
-            public Set(Config config, THONK.Services.ConfigLoader loader):base(config,loader){
+            public Set(IConfig config, THONK.Services.ConfigLoader loader):base(config,loader){
                 _config = config;
             }
         }
@@ -191,7 +191,7 @@ namespace THONK.CommandModules{
             await Context.Channel.SendMessageAsync(msg);
         }
 
-        public Configuration(Config config, THONK.Services.ConfigLoader loader){
+        public Configuration(IConfig config, THONK.Services.ConfigLoader loader){
             _config = config;
             _loader = loader;
         }
