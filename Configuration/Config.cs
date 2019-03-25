@@ -4,6 +4,7 @@ using System.Linq;
 using Discord.WebSocket;
 
 namespace THONK.Configuration{
+    // I'm too lazy to document this implemenation ;_;
     public class Config : IConfig{
         Dictionary<ulong,ConfigMember> members;
         public IConfigMember this[ulong key]{
@@ -17,6 +18,9 @@ namespace THONK.Configuration{
                 members[key] = (ConfigMember)value;
             }
         }
+        // TODO
+        //
+        // return config of the guild from context from this is accessed
         public IConfigMember Current(){
             //ulong id;
             return new ConfigMember();
