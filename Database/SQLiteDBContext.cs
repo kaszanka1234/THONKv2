@@ -22,7 +22,7 @@ namespace THONK.Database {
             // to create database you have to:
             // 1. run the code first so it will create the correct file
             // 2. 'dotnet ef migrations add' to migrate classes into tables
-            // 3. 'dotnet database update' to update the database with generated tables
+            // 3. 'dotnet ef database update' to update the database with generated tables
         }
 
         protected override void OnModelCreating(ModelBuilder builder){
