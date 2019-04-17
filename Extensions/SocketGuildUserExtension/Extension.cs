@@ -29,6 +29,17 @@ namespace THONK.Extensions.SocketGuildUserExtension{
                 return 0;
         }}
 
+        private static string IntToRole(int role){switch(role){
+            case 10:    return "Warlord";
+            case 9:     return "General";
+            case 8:     return "Lieutenant";
+            case 6:     return "Sergeant";
+            case 4:     return "Soldier";
+            case 3:     return "Guest";
+            case 2:     return "Initiate";
+            default:    throw new Exception("No suitable clan role found");
+        }}
+
         public static int AccessLevel(this SocketGuildUser user){
             //if(user.Guild.Owner == user)return 11;
             int accessLevel = 0;
@@ -43,6 +54,10 @@ namespace THONK.Extensions.SocketGuildUserExtension{
 
         public static bool HigherThan(this SocketGuildUser u, SocketGuildUser user){
             return u.AccessLevel()>user.AccessLevel();
+        }
+
+        public static SocketRole ClanRank(this SocketGuildUser u){
+            return u.Roles.Where(x=>x.Name==IntToRole(u.AccessLevel())).First();
         }
     }
 }

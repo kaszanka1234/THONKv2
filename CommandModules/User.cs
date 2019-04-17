@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using THONK.Configuration;
@@ -38,7 +39,7 @@ namespace THONK.CommandModules{
 
                 // send a message signalig success
                 string msg = $"**{(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)}** is now member of the clan, welcome and have fun!";
-                await Context.Channel.SendFileAsync(msg);
+                await Context.Channel.SendMessageAsync(msg);
 
                 // send a message to botlog channel
                 var channel = _config[Context.Guild.Id].BotLogChannel;
@@ -59,7 +60,7 @@ namespace THONK.CommandModules{
         }
 
         // command for changing user's rank
-        [Command("rank")]
+        [Command("rank"),Priority(2)]
         public async Task Rank(SocketGuildUser user, string rank){
             var userRequesting = Context.User as SocketGuildUser;
             // disallow users with rank lower than Lieutenant
@@ -92,10 +93,20 @@ namespace THONK.CommandModules{
             // and delete any other clan roles
             if(name != "notfound"){
                 role = Context.Guild.Roles.Where(x=>x.Name==name).First();
+                SocketRole bef = user.ClanRank();
                 await user.AddRoleAsync(role);
                 await user.DeleteClanRanksExceptAsync(name);
                 string msg = $"Rank of {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} was set to {role.Name}";
                 await Context.Channel.SendMessageAsync(msg);
+                var channel = _config[Context.Guild.Id].BotLogChannel;
+                if(channel!=null){
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.WithAuthor(Context.User);
+                    builder.WithDescription($"Rank of user {user.Mention} was changed");
+                    builder.AddField("From",bef.Mention);
+                    builder.AddField("To",role.Mention);
+                    await channel.SendMessageAsync("",false,builder.Build());
+                }
             }
             // if role isn't clan rank try to match it with any other assignable role
             else{
@@ -104,12 +115,12 @@ namespace THONK.CommandModules{
         }
 
         // overload for previous command
-        [Command("rank")]
+        [Command("rank"),Priority(2)]
         public async Task Rank(string rank,SocketGuildUser user)=>await Rank(user,rank);
 
         // show usage for command
         [Command("rank"),Priority(1)]
-        public async Task Rank(){
+        public async Task Rank([Remainder]string s=""){
             string msg = $"Correct syntax:\n{_config[Context.Guild.Id].Prefix}user rank (@user) (rank)";
             await Context.Channel.SendMessageAsync(msg);
         }
@@ -151,6 +162,12 @@ namespace THONK.CommandModules{
                 await Context.Channel.SendMessageAsync(msg);
             }
         }
+
+        // force mastery rank for user
+        // [Command("setmr")]
+        // public async Task SetMR(){
+        //    // TODO 
+        // }
 
         // show insufficient permissions
         private async Task InsufficientPermissionsAsync(){
