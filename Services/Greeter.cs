@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -19,10 +20,12 @@ namespace THONK.Services{
 
         // Method to execute after new user joins the server
         public async Task UserJoined(SocketGuildUser user){
+            var role = user.Guild.Roles.Where(x=>x.Name=="Visitor").First();
+            await user.AddRoleAsync(role);
             // send a message to general channel if it's configured
             if(_config[user.Guild.Id].GeneralChannel!=null){
                 var channel = _config[user.Guild.Id].GeneralChannel;
-                string greetMessage = $"Hewwo {user.Mention}! Welcome on **{user.Guild.Name}**";
+                string greetMessage = $"Hewoo {user.Mention}! Welcome on **{user.Guild.Name}**";
                 await channel.SendMessageAsync(greetMessage);
             }
             // Log new user if log is configured
