@@ -6,20 +6,28 @@ using Microsoft.EntityFrameworkCore;
 using Discord.WebSocket;
 
 namespace THONK.Database {
-    public class SQLiteDBContextStore : DbContext {
+    public class SQLiteDBContext : DbContext {
         public DbSet<GuildsConfig> GuildConfigs { get; set; }
-        public DbSet<GuildUsers> GuildUsers { get; set; }
+        //public DbSet<GuildUsers> GuildUsers { get; set; }
 
+        // Load or create* database file
+        //
+        // ______________________________
+        // * created file will not have any tables in (look further below)
         protected override void OnConfiguring(DbContextOptionsBuilder Options) {
             Options.UseSqlite("Data Source=db.sqlite");
+
+            // if no file is found a new one will be created
+            // i haven't figured out how to generate tables on runtime so it won't work and bot will crash
+            // to create database you have to:
+            // 1. run 'dotnet ef migrations add' in termianl to migrate classes into tables
+            // 2. 'dotnet ef database update' to update the database with generated tables
         }
-    }
-    public class GuildData {
-        public string Prefix { get; set; }
-        public SocketTextChannel GeneralChannel { get; set; }
-        public SocketTextChannel AnnouncementsChannel { get; set; }
-        public SocketTextChannel BotLogChannel { get; set; }
-        public SocketTextChannel LogChannel { get; set; }
-        public Dictionary<long,GuildUsers> Users { get; set; }
+
+        // protected override void OnModelCreating(ModelBuilder builder){
+        //     // TODO
+        //     //
+        //     // generate tables on run time
+        // }
     }
 }
