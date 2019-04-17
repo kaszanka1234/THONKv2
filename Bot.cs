@@ -53,7 +53,7 @@ namespace THONK {
             await provider.GetRequiredService<Start>().StartAsync();
 
             // Load configuration from database
-            provider.GetRequiredService<ConfigLoader>().LoadAll();
+            provider.GetRequiredService<ConfigLoader>();
 
             // Wait indefinetly so the program won't end
             await Task.Delay(-1);

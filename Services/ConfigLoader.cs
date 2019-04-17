@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord.WebSocket;
 using THONK.Configuration;
 using THONK.Database;
@@ -13,31 +14,40 @@ namespace THONK.Services{
         public ConfigLoader(DiscordSocketClient client, IConfig config){
             _config = config;
             _client = client;
+            _client.GuildAvailable += LoadAll;
+        }
+
+        
+        private async Task LoadAll(SocketGuild guild){
+            LoadSingle(guild.Id);
+            // it's here just to supress editor warnings
+            // await Task.Delay(0);
         }
 
         /* Load configuration from db */
-        public void LoadAll(){
-            /* access db */
-            using(var db = new SQLiteDBContext()){
-                /* load all guilds */
-                foreach(var record in db.GuildConfigs){
-                    LoadGuild(record);
-                }
-            }
-        }
+        // public void LoadAll(){
+        //     /* access db */
+        //     using(var db = new SQLiteDBContext()){
+        //         /* load all guilds */
+        //         foreach(var record in db.GuildConfigs){
+        //             LoadGuild(record);
+        //         }
+        //     }
+        // }
         /* (re)load single guild */
         public void LoadSingle(ulong guildId){
             /* access db */
             using(var db = new SQLiteDBContext()){
                 /* load single record */
+                if(db.GuildConfigs.Find(guildId)==null)return;
                 LoadGuild(db.GuildConfigs.Find(guildId));
             }
         }
         /* fill config with data from record */
         void LoadGuild(GuildsConfig config){
             /* get aliases of guild and single config entry */
-            var guild = _client.GetGuild(config.GuildID);
-            var con = _config[guild.Id];
+            SocketGuild guild = _client.GetGuild(config.GuildID);
+            IConfigMember con = _config[guild.Id];
             /* load prefix from db record */
             con.Prefix = config.Prefix;
             /* find actuall channels from ids in db and load into config */
