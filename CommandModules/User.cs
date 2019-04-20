@@ -44,8 +44,12 @@ namespace THONK.CommandModules{
                 // send a message to botlog channel
                 var channel = _config[Context.Guild.Id].BotLogChannel;
                 if(channel!=null){
-                    msg = $"User {user.Mention} ({user.Id}) was approved by {Context.User.Mention}";
-                    await channel.SendMessageAsync(msg);
+                    var builder = new EmbedBuilder();
+                    builder.WithColor(Color.LightGrey);
+                    builder.WithCurrentTimestamp();
+                    builder.WithAuthor(Context.User);
+                    builder.WithDescription($"User {user.Mention} ({user.Id}) was approved");
+                    await channel.SendMessageAsync("",false,builder.Build());
                 }
             }else{
                 await Context.Channel.SendMessageAsync("User is already approved");
