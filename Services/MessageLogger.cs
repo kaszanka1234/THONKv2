@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using THONK.Configuration;
 
@@ -31,8 +32,14 @@ namespace THONK.Services{
                 // Get message contetns
                 IMessage msg = cached.Value;
                 // Ignore messages that are commands
-                if(false){
-                    // TODO
+                int pos = 0;
+                if((msg as SocketUserMessage).HasStringPrefix(_config[(messageChannel as SocketGuildChannel).Guild.Id].Prefix,ref pos)){
+                    // still TODO
+                    return;
+                }
+                // Ignore if author is self
+                if(msg.Author==_client.CurrentUser){
+                    return;
                 }
                 // Append autor name and message contents to embed
                 builder.WithAuthor(msg.Author);
