@@ -46,8 +46,8 @@ namespace THONK.Services{
                 }
                 // Append autor name and message contents to embed
                 builder.WithAuthor(msg.Author);
-                builder.WithTitle($"Message was deleted in {(messageChannel as SocketTextChannel).Mention}");
-                builder.WithDescription(msg.Content);
+                builder.WithDescription($"**Message was deleted in {(messageChannel as SocketTextChannel).Mention}**");
+                builder.Description += $"\n{msg.Content}";
                 // TODO
                 /*if(msg.Embeds.Count>0){
                     foreach(var embed in msg.Embeds){
@@ -84,13 +84,16 @@ namespace THONK.Services{
 
             using(var client = new HttpClient()){
                 var enumerator = attachments.GetEnumerator();
-                
+                Stream attachment;
                 string fName;
                 while(enumerator.MoveNext()){
-                    //
                     fName = enumerator.Current.Filename;
-                    Stream attachment = await client.GetStreamAsync(enumerator.Current.ProxyUrl);
-                    await channel.SendFileAsync(attachment,fName,$"ID: {msg.Id}");
+                    if(!enumerator.Current.Width.HasValue && !enumerator.Current.Height.HasValue){
+                        await channel.SendMessageAsync($"ID: {msg.Id}, type: binary\nname: {fName}");
+                    }else{
+                        attachment = await client.GetStreamAsync(enumerator.Current.ProxyUrl);
+                        await channel.SendFileAsync(attachment,fName,$"ID: {msg.Id}, type: image");
+                    }
                     await Task.Delay(5000);
                 }
             }
@@ -129,7 +132,7 @@ namespace THONK.Services{
 
                 // Append message author and what was edited to embed
                 builder.WithAuthor(newMessage.Author);
-                builder.WithTitle($"Message edited in {(messageChannel as SocketTextChannel).Mention}");
+                builder.WithDescription($"Message edited in {(messageChannel as SocketTextChannel).Mention}");
                 builder.AddField("Before",msg.Content);
                 builder.AddField("After",newMessage.Content);
             }
