@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -54,17 +55,51 @@ namespace THONK.Services{
                     }
                 }*/
                 if(msg.Attachments.Count>0){
-                    foreach(var attachment in msg.Attachments){
+                    Task.Run(()=>QueueDeletedMessagesWithAttachments(msg as SocketUserMessage,channel));
+                    /*foreach(var attachment in msg.Attachments){
                         using(HttpClient client = new HttpClient()){
                             Stream str = await client.GetStreamAsync(attachment.ProxyUrl);
                             await channel.SendFileAsync(str,attachment.Filename,"",false,null,null);
                         }
                         
-                    }
+                    }*/
+                    return;
                 }
             }
             // Build and send the embed
             await channel.SendMessageAsync("",false,builder.Build());
+        }
+
+        private async Task QueueDeletedMessagesWithAttachments(SocketUserMessage msg, SocketTextChannel channel){
+            IReadOnlyCollection<IAttachment> attachments = msg.Attachments;
+
+            var startBuilder = new EmbedBuilder();
+            startBuilder.WithAuthor(msg.Author);
+            startBuilder.WithColor(Color.Red);
+            startBuilder.WithDescription($"**Message with attachments was deleted in {channel.Mention}**");
+            startBuilder.Description += $"\n{msg.Content}";
+            startBuilder.AddField("Message ID",msg.Id);
+
+            await channel.SendMessageAsync("",false,startBuilder.Build());
+
+            using(var client = new HttpClient()){
+                var enumerator = attachments.GetEnumerator();
+                
+                string fName;
+                while(enumerator.MoveNext()){
+                    //
+                    fName = enumerator.Current.Filename;
+                    Stream attachment = await client.GetStreamAsync(enumerator.Current.ProxyUrl);
+                    await channel.SendFileAsync(attachment,fName,$"ID: {msg.Id}");
+                    await Task.Delay(5000);
+                }
+            }
+
+            var endBuilder = new EmbedBuilder();
+            endBuilder.WithColor(Color.Red);
+            endBuilder.WithCurrentTimestamp();
+            endBuilder.WithDescription($"End of transmission with ID {msg.Id}");
+            await channel.SendMessageAsync("",false,endBuilder.Build());
         }
 
         // Method executed after message is edited
