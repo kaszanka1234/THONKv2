@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -45,6 +47,21 @@ namespace THONK.Services{
                 builder.WithAuthor(msg.Author);
                 builder.WithTitle($"Message was deleted in {(messageChannel as SocketTextChannel).Mention}");
                 builder.WithDescription(msg.Content);
+                // TODO
+                /*if(msg.Embeds.Count>0){
+                    foreach(var embed in msg.Embeds){
+                        await channel.SendMessageAsync("",false,embed as Embed);
+                    }
+                }*/
+                if(msg.Attachments.Count>0){
+                    foreach(var attachment in msg.Attachments){
+                        using(HttpClient client = new HttpClient()){
+                            Stream str = await client.GetStreamAsync(attachment.ProxyUrl);
+                            await channel.SendFileAsync(str,attachment.Filename,"",false,null,null);
+                        }
+                        
+                    }
+                }
             }
             // Build and send the embed
             await channel.SendMessageAsync("",false,builder.Build());
