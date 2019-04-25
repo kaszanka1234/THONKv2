@@ -20,8 +20,6 @@ namespace THONK.Services{
         
         private async Task LoadAll(SocketGuild guild){
             Task.Run(()=>LoadSingle(guild.Id));
-            // it's here just to supress editor warnings
-            // await Task.Delay(0);
         }
 
         /* Load configuration from db */
