@@ -54,15 +54,10 @@ namespace THONK.Services{
                         await channel.SendMessageAsync("",false,embed as Embed);
                     }
                 }*/
+
+                // if message had attachments queue them for logging
                 if(msg.Attachments.Count>0){
-                    Task.Run(()=>QueueDeletedMessagesWithAttachments(msg as SocketUserMessage,channel));
-                    /*foreach(var attachment in msg.Attachments){
-                        using(HttpClient client = new HttpClient()){
-                            Stream str = await client.GetStreamAsync(attachment.ProxyUrl);
-                            await channel.SendFileAsync(str,attachment.Filename,"",false,null,null);
-                        }
-                        
-                    }*/
+                    Task.Run(()=>QueueDeletedMessagesWithAttachments(msg as SocketUserMessage,channel,messageChannel as SocketTextChannel));
                     return;
                 }
             }
@@ -70,34 +65,52 @@ namespace THONK.Services{
             await channel.SendMessageAsync("",false,builder.Build());
         }
 
-        private async Task QueueDeletedMessagesWithAttachments(SocketUserMessage msg, SocketTextChannel channel){
+        // method handling deletion of messages with attachments
+        private async Task QueueDeletedMessagesWithAttachments(SocketUserMessage msg, SocketTextChannel channel, SocketTextChannel messageChannel){
             IReadOnlyCollection<IAttachment> attachments = msg.Attachments;
 
+            // create an embed at the start of the message, add author, color, description,
+            // and id of deleted message
             var startBuilder = new EmbedBuilder();
             startBuilder.WithAuthor(msg.Author);
             startBuilder.WithColor(Color.Red);
-            startBuilder.WithDescription($"**Message with attachments was deleted in {channel.Mention}**");
+            startBuilder.WithDescription($"**Message with attachments was deleted in {messageChannel.Mention}**");
             startBuilder.Description += $"\n{msg.Content}";
             startBuilder.AddField("Message ID",msg.Id);
-
+            // send the embed
             await channel.SendMessageAsync("",false,startBuilder.Build());
 
+            // create http client instance to get deleted attachments
             using(var client = new HttpClient()){
+                // get enumerator of attachments list
                 var enumerator = attachments.GetEnumerator();
+
                 Stream attachment;
                 string fName;
+
+                // execute as long as there are items in the list
                 while(enumerator.MoveNext()){
+                    // get filename of the attachment
                     fName = enumerator.Current.Filename;
+
+                    // only image attachments can be downloaded, other throw 404 error
+                    // if attachment isn't an image just display name, size
+                    // and id of original message
                     if(!enumerator.Current.Width.HasValue && !enumerator.Current.Height.HasValue){
-                        await channel.SendMessageAsync($"ID: {msg.Id}, type: binary\nname: {fName}");
-                    }else{
+                        await channel.SendMessageAsync($"ID: {msg.Id}, type: binary\nname: {fName}\nsize: {enumerator.Current.Size} bytes");
+                    }
+                    // if attachment is image download it and resend it as new
+                    else{
                         attachment = await client.GetStreamAsync(enumerator.Current.ProxyUrl);
                         await channel.SendFileAsync(attachment,fName,$"ID: {msg.Id}, type: image");
                     }
+                    // wait 5 seconds between attachments
                     await Task.Delay(5000);
                 }
             }
 
+
+            // build and display embed signaling the end of all attachments
             var endBuilder = new EmbedBuilder();
             endBuilder.WithColor(Color.Red);
             endBuilder.WithCurrentTimestamp();
