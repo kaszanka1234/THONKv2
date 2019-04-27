@@ -34,7 +34,7 @@ namespace THONK.Services{
          * test that function
          */
         async Task UserUpdated(SocketUser before, SocketUser after){
-            if(before.Username!=after.Username)return;
+            if(before.Username==after.Username)return;
             foreach(var guild in _client.Guilds){
                 if(_config[guild.Id].BotLogChannel==null)continue;
                 var channel = _config[guild.Id].BotLogChannel;
