@@ -22,6 +22,10 @@ namespace THONK.CommandModules{
                 await Context.Channel.SendMessageAsync(":x: Insufficient permissions");
                 return;
             }
+            if(user.ClanRank()==null){
+                await Context.Channel.SendMessageAsync("user is not in a clan");
+                return;
+            }
             await user.RemoveRoleAsync(user.ClanRank());
             await Context.Channel.SendMessageAsync("user was kicked from clan");
             await user.SendMessageAsync($"You were kicked from a clan for: {(reason==""?"*no reason specified*":reason)}\nif you think this was a mistake and want to rejoin the clan message any sergeant or higher");
