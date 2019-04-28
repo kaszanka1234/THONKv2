@@ -24,6 +24,7 @@ namespace THONK.CommandModules{
             }
             await user.RemoveRoleAsync(user.ClanRank());
             await Context.Channel.SendMessageAsync("user was kicked from clan");
+            await user.SendMessageAsync($"You were kicked from a clan for: {(reason==""?"*no reason specified*":reason)}\nif you think this was a mistake and want to rejoin the clan message any sergeant or higher");
             var channel = _config[Context.Guild.Id].BotLogChannel;
             if(channel == null)return;
             var builder = new EmbedBuilder();
