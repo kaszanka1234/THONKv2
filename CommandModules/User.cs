@@ -106,7 +106,7 @@ namespace THONK.CommandModules{
                 if(channel!=null){
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.WithAuthor(Context.User);
-                    builder.WithDescription($"Rank of user {user.Mention} was changed");
+                    builder.WithDescription($"Rank of user {user.Mention} ({user.Id}) was changed");
                     builder.AddField("From",bef.Mention);
                     builder.AddField("To",role.Mention);
                     await channel.SendMessageAsync("",false,builder.Build());
