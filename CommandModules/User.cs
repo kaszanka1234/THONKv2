@@ -68,7 +68,7 @@ namespace THONK.CommandModules{
         public async Task Rank(SocketGuildUser user, string rank){
             var userRequesting = Context.User as SocketGuildUser;
             // disallow users with rank lower than Lieutenant
-            if(!userRequesting.Authorized("Lieutenant")){await InsufficientPermissionsAsync();return;}
+            if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
 
             // disallow changing roles of users with higher rank
             if(!userRequesting.HigherThan(user)){await InsufficientPermissionsAsync();return;}
@@ -91,7 +91,7 @@ namespace THONK.CommandModules{
             }
 
             // disallow setting roles higher than own
-            if(!userRequesting.Authorized(name)){await InsufficientPermissionsAsync();return;}
+            if(!userRequesting.IsAtLeast(name)){await InsufficientPermissionsAsync();return;}
             
             // if passed role is correct clan rank set it as user role
             // and delete any other clan roles
@@ -106,7 +106,7 @@ namespace THONK.CommandModules{
                 if(channel!=null){
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.WithAuthor(Context.User);
-                    builder.WithDescription($"Rank of user {user.Mention} was changed");
+                    builder.WithDescription($"Rank of user {user.Mention} ({user.Id}) was changed");
                     builder.AddField("From",bef.Mention);
                     builder.AddField("To",role.Mention);
                     await channel.SendMessageAsync("",false,builder.Build());

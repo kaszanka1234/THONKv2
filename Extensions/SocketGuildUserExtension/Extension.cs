@@ -6,7 +6,7 @@ using Discord.WebSocket;
 namespace THONK.Extensions.SocketGuildUserExtension{
     public static class Extension{
         
-        public static bool Authorized(this SocketGuildUser user, string minRole){
+        public static bool IsAtLeast(this SocketGuildUser user, string minRole){
             return user.AccessLevel()>=RoleToInt(minRole);
         }
 
@@ -37,6 +37,7 @@ namespace THONK.Extensions.SocketGuildUserExtension{
             case 4:     return "Soldier";
             case 3:     return "Guest";
             case 2:     return "Initiate";
+            case 0:     return "";
             default:    throw new Exception("No suitable clan role found");
         }}
 
@@ -57,7 +58,11 @@ namespace THONK.Extensions.SocketGuildUserExtension{
         }
 
         public static SocketRole ClanRank(this SocketGuildUser u){
-            return u.Roles.Where(x=>x.Name==IntToRole(u.AccessLevel())).First();
+            IEnumerable<SocketRole> tmp = u.Roles.Where(x=>x.Name==IntToRole(u.AccessLevel()));
+            if(tmp.Count()==0){
+                return null;
+            }
+            return tmp.First();
         }
     }
 }
