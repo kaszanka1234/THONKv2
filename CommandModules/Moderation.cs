@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -16,14 +17,32 @@ namespace THONK.CommandModules{
         }
 
         [Command("kick"),Priority(2)]
-        public async Task Kick(SocketGuildUser user, [Remainder]string reason = ""){
+        public async Task Kick(SocketGuildUser user, params string[] args){
             SocketGuildUser issuer = Context.User as SocketGuildUser;
-            if(!issuer.Authorized("General") || !issuer.HigherThan(user)){
+            if(!issuer.IsAtLeast("General") || !issuer.HigherThan(user)){
                 await Context.Channel.SendMessageAsync(":x: Insufficient permissions");
+                return;
+            }
+            if(user.IsAtLeast("Sergeant")){
+                await Context.Channel.SendMessageAsync(":x: You cannot kick staff members");
                 return;
             }
             if(user.ClanRank()==null){
                 await Context.Channel.SendMessageAsync("user is not in a clan");
+                return;
+            }
+            bool force = false;
+            string reason = "";
+            SocketRole inactiveRole = Context.Guild.Roles.Where(x=>x.Name=="Inactive").First();
+            foreach(var arg in args){
+                if(arg=="-f"){
+                    force=true;
+                }else{
+                    reason += " "+arg;
+                }
+            }
+            if(user.Roles.Contains(inactiveRole) && !force){
+                await Context.Channel.SendMessageAsync("User is marked as inactive, use -f if you are sure");
                 return;
             }
             await user.RemoveRoleAsync(user.ClanRank());
@@ -49,7 +68,7 @@ namespace THONK.CommandModules{
         [Command("warn"),Priority(2)]
         public async Task Warn(SocketGuildUser user,string type, [Remainder]string custom = ""){
             SocketGuildUser issuer = Context.User as SocketGuildUser;
-            if(!issuer.Authorized("Lieutenant")){
+            if(!issuer.IsAtLeast("Lieutenant")){
                 await Context.Channel.SendMessageAsync(":x: Insufficient permissions");
                 return;
             }

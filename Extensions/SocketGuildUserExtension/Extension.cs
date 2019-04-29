@@ -6,7 +6,7 @@ using Discord.WebSocket;
 namespace THONK.Extensions.SocketGuildUserExtension{
     public static class Extension{
         
-        public static bool Authorized(this SocketGuildUser user, string minRole){
+        public static bool IsAtLeast(this SocketGuildUser user, string minRole){
             return user.AccessLevel()>=RoleToInt(minRole);
         }
 
