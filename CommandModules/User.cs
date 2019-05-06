@@ -140,7 +140,7 @@ namespace THONK.CommandModules{
         }
 
         // set mastery rank for user
-        [Command("")]
+        [Command(""),Priority(1)]
         public async Task Mr([Remainder]string rank){
             int r;
             bool succ;

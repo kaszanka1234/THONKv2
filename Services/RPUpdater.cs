@@ -30,7 +30,12 @@ namespace THONK.Services {
                     timeChecked = plainsTime.Time;
                     // parse the data and set correct time as status
                     bool isDay = timeChecked.TotalMinutes <= 100;
-                    await SetPresenceAsync($"{(isDay?100-Math.Floor(timeChecked.TotalMinutes):150-Math.Floor(timeChecked.TotalMinutes))}m to {(!isDay?"day":"night")}");
+                    int timeToShow = (int)(isDay?100-Math.Floor(timeChecked.TotalMinutes):150-Math.Floor(timeChecked.TotalMinutes));
+                    if(timeToShow==0){
+                        await SetPresenceAsync($"<1m to {(!isDay?"day":"night")}");
+                    }else{
+                        await SetPresenceAsync($"{timeToShow}m to {(!isDay?"day":"night")}");
+                    }
                 }
                 // wait 2.5 seconds before rechecking
                 await Task.Delay(2500);
