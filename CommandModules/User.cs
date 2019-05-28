@@ -141,7 +141,10 @@ namespace THONK.CommandModules{
 
         // set mastery rank for user
         [Command(""),Priority(1)]
-        public async Task Mr([Remainder]string rank){
+        public async Task Mr(string one, string two, SocketGuildUser user=null) => await Mr(one+two, user);
+
+        [Command(""),Priority(1)]
+        public async Task Mr(string rank, SocketGuildUser user=null){
             int r;
             bool succ;
             string msg;
@@ -156,9 +159,12 @@ namespace THONK.CommandModules{
                 return;
             }
             if(succ&&r>=0&&r<=30){
-                await (Context.User as SocketGuildUser).RemoveRolesAsync((Context.User as SocketGuildUser).Roles.Where(x=>x.Name.Substring(0,2)=="MR"));
-                await (Context.User as SocketGuildUser).AddRoleAsync(Context.Guild.Roles.Where(x=>x.Name==$"MR{r}").First());
-                msg = $"{(string.IsNullOrEmpty((Context.User as SocketGuildUser).Nickname)?Context.User.Username:(Context.User as SocketGuildUser).Nickname)} has been assigned MR{r}";
+                var target = Context.User;
+                if(user!=null && (Context.User as SocketGuildUser).IsAtLeast("Lieutenant")){
+                    target = user;
+                }
+                await SetMR(target, r);
+                msg = $"{(string.IsNullOrEmpty((target as SocketGuildUser).Nickname)?target.Username:(target as SocketGuildUser).Nickname)} has been assigned MR{r}";
                 await Context.Channel.SendMessageAsync(msg);
             }else{
                 string p = _config[Context.Guild.Id].Prefix;
@@ -167,11 +173,17 @@ namespace THONK.CommandModules{
             }
         }
 
-        // force mastery rank for user
-        // [Command("setmr")]
-        // public async Task SetMR(){
-        //    // TODO 
-        // }
+        // set mastery rank for user
+        private async Task SetMR(SocketUser user, int mr){
+            if(mr<0 || mr>30){
+                throw new Exception("Mastery rank out of range!");
+            }
+            var u = user as SocketGuildUser;
+            await u.RemoveRolesAsync(u.Roles.Where(x=>x.Name.Substring(0,2)=="MR"));
+            await u.AddRoleAsync(Context.Guild.Roles.Where(x=>x.Name==$"MR{mr}").First());
+        }
+
+        //
 
         // show insufficient permissions
         private async Task InsufficientPermissionsAsync(){
