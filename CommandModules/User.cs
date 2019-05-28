@@ -22,7 +22,7 @@ namespace THONK.CommandModules{
         [Command(""),Priority(0)]
         public async Task Usage([Remainder]string s=""){
             string p = _config[Context.Guild.Id].Prefix;
-            string msg = $"correct commands:\n{p}user approve\n{p}user rank\n{p}user mr";
+            string msg = $"correct commands:\n{p}user approve\n{p}user rank\n{p}user mr\n{p}user inactive @user ture/false";
             await Context.Channel.SendMessageAsync(msg);
         }
 
@@ -183,7 +183,45 @@ namespace THONK.CommandModules{
             await u.AddRoleAsync(Context.Guild.Roles.Where(x=>x.Name==$"MR{mr}").First());
         }
 
-        //
+        // toggle user inactivity status
+        [Command("inactive"),Priority(1)]
+        public async Task SetInactive(SocketGuildUser user, bool? status=null){
+            if(!(Context.User as SocketGuildUser).IsAtLeast("Lieutenant")){
+                await InsufficientPermissionsAsync();
+                return;
+            }
+            var inactiveRole = Context.Guild.Roles.Where(x=>x.Name=="Inactive").First();
+            bool hasRole = user.Roles.Contains(inactiveRole);
+            if(status==null && hasRole){
+                status = false;
+            }else if(status==null && !hasRole){
+                status = true;
+            }else if(hasRole == status){
+                // nothing changed
+                return;
+            }
+            
+            var botLogChannel = _config[Context.Guild.Id].LogChannel;
+
+            string msg = "";
+
+            var builder = new EmbedBuilder();
+            builder.WithAuthor(Context.User);
+            builder.WithColor(Color.LightGrey);
+            builder.WithCurrentTimestamp();
+
+            if(status==false){
+                await user.RemoveRoleAsync(inactiveRole);
+                msg = $"User was set as active";
+                builder.WithDescription($"User {user.Mention} {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} ({user.Id}) was set as active");
+            }else if(status==true){
+                await user.AddRoleAsync(inactiveRole);
+                msg = $"User was set as inactive";
+                builder.WithDescription($"User {user.Mention} {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} ({user.Id}) was set as {inactiveRole.Mention}");
+            }
+            await Context.Channel.SendMessageAsync(msg);
+            await botLogChannel.SendMessageAsync("",false,builder.Build());
+        }
 
         // show insufficient permissions
         private async Task InsufficientPermissionsAsync(){
