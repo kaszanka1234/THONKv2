@@ -27,7 +27,7 @@ namespace THONK.CommandModules{
         }
 
         // approve user as clan member
-        [Command("approve"),Alias("accept","a")]
+        [Command("approve"),Alias("accept","a"),Priority(2)]
         public async Task Approve(SocketGuildUser user){
             // get visitor role
             SocketRole visitor = Context.Guild.Roles.Where(x=>x.Name=="Visitor").First();
