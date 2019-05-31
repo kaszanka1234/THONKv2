@@ -22,7 +22,7 @@ namespace THONK.CommandModules{
         [Command(""),Priority(0)]
         public async Task Usage([Remainder]string s=""){
             string p = _config[Context.Guild.Id].Prefix;
-            string msg = $"correct commands:\n{p}user approve\n{p}user rank\n{p}user mr\n{p}user inactive @user ture/false";
+            string msg = $"correct commands:\n{p}user approve\n{p}user rank\n{p}user mr\n{p}user inactive @user true/false";
             await Context.Channel.SendMessageAsync(msg);
         }
 
