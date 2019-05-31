@@ -25,7 +25,7 @@ namespace THONK.Services{
             // send a message to general channel if it's configured
             if(_config[user.Guild.Id].GeneralChannel!=null){
                 var channel = _config[user.Guild.Id].GeneralChannel;
-                string greetMessage = $"Hewoo {user.Mention}! Welcome on **{user.Guild.Name}**";
+                string greetMessage = $"Hello {user.Mention}! Welcome on **{user.Guild.Name}**\nPlease remember to read <#514904135653654534> and to set your nickname (not username) here to match your in-game name";
                 await channel.SendMessageAsync(greetMessage);
             }
             // Log new user if log is configured
