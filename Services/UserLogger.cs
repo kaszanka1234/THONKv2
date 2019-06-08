@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using THONK.Configuration;
+using THONK.utils;
 
 namespace THONK.Services{
 
@@ -22,7 +23,7 @@ namespace THONK.Services{
             if(before.Nickname!=after.Nickname){
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.LightOrange);
-                builder.WithDescription($"{before.Mention} updated their nickname");
+                builder.WithDescription($"{HelperFunctions.UserIdentity(before)} updated their nickname");
                 builder.WithCurrentTimestamp();
                 builder.AddField("Before", string.IsNullOrEmpty(before.Nickname)?"no nickname":before.Nickname);
                 builder.AddField("After", string.IsNullOrEmpty(after.Nickname)?"no nickname":after.Nickname);
@@ -41,7 +42,7 @@ namespace THONK.Services{
                 SocketGuildUser guildUser = guild.Users.Where(x=>x.Id==before.Id).First();
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.LightOrange);
-                builder.WithDescription($"{guildUser.Mention} ({guildUser.Id}) updated their username");
+                builder.WithDescription($"{HelperFunctions.NicknameOrUsername(before as SocketGuildUser)} updated their username");
                 builder.WithCurrentTimestamp();
                 builder.AddField("Before", before.Username);
                 builder.AddField("After", after.Username);

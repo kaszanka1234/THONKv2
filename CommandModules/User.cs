@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using THONK.Configuration;
 using THONK.Extensions.SocketGuildUserExtension;
+using THONK.utils;
 
 namespace THONK.CommandModules{
     [Group("user")]
@@ -22,7 +23,7 @@ namespace THONK.CommandModules{
         [Command(""),Priority(0)]
         public async Task Usage([Remainder]string s=""){
             string p = _config[Context.Guild.Id].Prefix;
-            string msg = $"correct commands:\n{p}user approve\n{p}user rank\n{p}user mr\n{p}user inactive @user true/false";
+            string msg = $"correct commands:\n{p}user approve @user\n{p}user rank @user (rank)\n{p}user mr (mr)\n{p}user inactive @user true/false";
             await Context.Channel.SendMessageAsync(msg);
         }
 
@@ -38,7 +39,7 @@ namespace THONK.CommandModules{
                 await user.RemoveRoleAsync(visitor);
 
                 // send a message signalig success
-                string msg = $"**{(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)}** is now member of the clan, welcome and have fun!";
+                string msg = $"**{HelperFunctions.NicknameOrUsername(user)}** is now member of the clan, welcome and have fun!";
                 await Context.Channel.SendMessageAsync(msg);
 
                 // send a message to botlog channel
@@ -48,7 +49,7 @@ namespace THONK.CommandModules{
                     builder.WithColor(Color.LightGrey);
                     builder.WithCurrentTimestamp();
                     builder.WithAuthor(Context.User);
-                    builder.WithDescription($"User {user.Mention} ({user.Id}) was approved");
+                    builder.WithDescription($"User {HelperFunctions.UserIdentity(user)} was approved");
                     await channel.SendMessageAsync("",false,builder.Build());
                 }
             }else{
@@ -100,13 +101,13 @@ namespace THONK.CommandModules{
                 SocketRole bef = user.ClanRank();
                 await user.AddRoleAsync(role);
                 await user.DeleteClanRanksExceptAsync(name);
-                string msg = $"Rank of {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} was set to {role.Name}";
+                string msg = $"Rank of {HelperFunctions.NicknameOrUsername(user)} was set to {role.Name}";
                 await Context.Channel.SendMessageAsync(msg);
                 var channel = _config[Context.Guild.Id].BotLogChannel;
                 if(channel!=null){
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.WithAuthor(Context.User);
-                    builder.WithDescription($"Rank of user {user.Mention} ({user.Id}) was changed");
+                    builder.WithDescription($"Rank of user {HelperFunctions.UserIdentity(user)} was changed");
                     builder.AddField("From",bef.Mention);
                     builder.AddField("To",role.Mention);
                     await channel.SendMessageAsync("",false,builder.Build());
@@ -164,7 +165,7 @@ namespace THONK.CommandModules{
                     target = user;
                 }
                 await SetMR(target, r);
-                msg = $"{(string.IsNullOrEmpty((target as SocketGuildUser).Nickname)?target.Username:(target as SocketGuildUser).Nickname)} has been assigned MR{r}";
+                msg = $"{HelperFunctions.NicknameOrUsername(target as SocketGuildUser)} has been assigned MR{r}";
                 await Context.Channel.SendMessageAsync(msg);
             }else{
                 string p = _config[Context.Guild.Id].Prefix;
@@ -213,11 +214,11 @@ namespace THONK.CommandModules{
             if(status==false){
                 await user.RemoveRoleAsync(inactiveRole);
                 msg = $"User was set as active";
-                builder.WithDescription($"User {user.Mention} {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} ({user.Id}) was set as active");
+                builder.WithDescription($"User {HelperFunctions.UserIdentity(user)} was set as active");
             }else if(status==true){
                 await user.AddRoleAsync(inactiveRole);
                 msg = $"User was set as inactive";
-                builder.WithDescription($"User {user.Mention} {(string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname)} ({user.Id}) was set as {inactiveRole.Mention}");
+                builder.WithDescription($"User {HelperFunctions.UserIdentity(user)} was set as {inactiveRole.Mention}");
             }
             await Context.Channel.SendMessageAsync(msg);
             await botLogChannel.SendMessageAsync("",false,builder.Build());
