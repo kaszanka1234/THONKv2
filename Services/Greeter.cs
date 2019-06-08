@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using THONK.Configuration;
+using THONK.utils;
 
 namespace THONK.Services{
 
@@ -34,7 +35,7 @@ namespace THONK.Services{
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.Blue);
                 builder.WithCurrentTimestamp();
-                builder.WithDescription($"{user.Mention} ({user.Id}) just joined");
+                builder.WithDescription($"{HelperFunctions.UserIdentity(user)} just joined");
                 await channel.SendMessageAsync("",false,builder.Build());
             }
         }
@@ -44,8 +45,7 @@ namespace THONK.Services{
             // Send a message if general chanel is configured
             if(_config[user.Guild.Id].GeneralChannel!=null){
                 var channel = _config[user.Guild.Id].GeneralChannel;
-                string name = string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname;
-                string leaveMessage = $"**{name}** left\nPress F to pay respects";
+                string leaveMessage = $"**{HelperFunctions.NicknameOrUsername(user)}** left\nPress F to pay respects";
                 await channel.SendMessageAsync(leaveMessage);
             }
             // Log the incident if log is configured
@@ -55,7 +55,7 @@ namespace THONK.Services{
                 builder.WithColor(Color.DarkRed);
                 builder.WithCurrentTimestamp();
                 string name = string.IsNullOrEmpty(user.Nickname)?user.Username:user.Nickname;
-                builder.WithDescription($"{user.Mention}, **{name}** ({user.Id}) left");
+                builder.WithDescription($"{HelperFunctions.UserIdentity(user)} left");
                 await channel.SendMessageAsync("",false,builder.Build());
             }
         }

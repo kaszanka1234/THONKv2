@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using THONK.Extensions.SocketGuildUserExtension;
 using THONK.Configuration;
+using THONK.Extensions.SocketGuildUserExtension;
+using THONK.utils;
+
 
 namespace THONK.CommandModules{
     public class Moderation : ModuleBase<SocketCommandContext>{
@@ -54,7 +56,7 @@ namespace THONK.CommandModules{
             builder.WithColor(Color.Red);
             builder.WithCurrentTimestamp();
             builder.WithAuthor(issuer);
-            builder.WithDescription($"{user.Mention} ({user.Id}) was kicked\nreason: {reason}");
+            builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was kicked\nreason: {reason}");
             await channel.SendMessageAsync("",false,builder.Build());
         }
         
@@ -93,7 +95,7 @@ namespace THONK.CommandModules{
             var builder = new EmbedBuilder();
             builder.WithAuthor(issuer);
             builder.WithCurrentTimestamp();
-            builder.WithDescription($"{user.Mention} ({user.Id}) was given a warning of type: {type}{(custom==""?"":$" reason: {custom}")}");
+            builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was given a warning of type: {type}{(custom==""?"":$" reason: {custom}")}");
             await channel.SendMessageAsync("",false,builder.Build());
         }
 

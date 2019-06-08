@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -22,6 +23,12 @@ namespace THONK.CommandModules{
                 return;
             }
             await channel.SendMessageAsync(msg);
+        }
+
+        [Command("w"),Alias("pm")]
+        public async Task PrivateMessage(SocketUser target, [Remainder]string msg){
+            if(Context.User!=Context.Guild.Owner)return;
+            await target.SendMessageAsync(msg);
         }
 
         public Say(THONK.Configuration.IConfig config){
