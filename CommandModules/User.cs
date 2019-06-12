@@ -68,11 +68,12 @@ namespace THONK.CommandModules{
         [Command("rank"),Priority(2)]
         public async Task Rank(SocketGuildUser user, string rank){
             var userRequesting = Context.User as SocketGuildUser;
-            // disallow users with rank lower than Lieutenant
-            if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
 
-            // disallow changing roles of users with higher rank
-            if(!userRequesting.HigherThan(user)){await InsufficientPermissionsAsync();return;}
+            if(user==null){
+                user = userRequesting;
+            }else{
+                if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
+            }
 
             SocketRole role;
             string name;
@@ -96,7 +97,13 @@ namespace THONK.CommandModules{
             
             // if passed role is correct clan rank set it as user role
             // and delete any other clan roles
-            if(name != "notfound"){
+            if(name != "notfound"){    
+                // disallow users with rank lower than Lieutenant
+                if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
+
+                // disallow changing roles of users with higher rank
+                if(!userRequesting.HigherThan(user)){await InsufficientPermissionsAsync();return;}
+
                 role = Context.Guild.Roles.Where(x=>x.Name==name).First();
                 SocketRole bef = user.ClanRank();
                 await user.AddRoleAsync(role);
@@ -121,7 +128,7 @@ namespace THONK.CommandModules{
 
         // overload for previous command
         [Command("rank"),Priority(2)]
-        public async Task Rank(string rank,SocketGuildUser user)=>await Rank(user,rank);
+        public async Task Rank(string rank,SocketGuildUser user=null)=>await Rank(user,rank);
 
         // show usage for command
         [Command("rank"),Priority(1)]
@@ -132,10 +139,22 @@ namespace THONK.CommandModules{
         
         // method for setting roles not releated to clan ranks
         private async Task RankOther(SocketGuildUser user, string rank){
-            if(false){
-                // placeholder for setting other roles
+            string[] allowedRoles={
+                "nsfw-role"
+            };
+            string msg = "";
+            if(allowedRoles.Contains(rank)){
+                var role = Context.Guild.Roles.Where(x=>x.Name.ToLower()==rank).First();
+                if(user.Roles.Contains(role)){
+                    await user.RemoveRoleAsync(role);
+                    msg = $"{(user==(Context.User as SocketGuildUser)?"Your":$"{HelperFunctions.NicknameOrUsername(user)}'s")} {role.Name} role has been removed";
+                }else{
+                    await user.AddRoleAsync(role);
+                    msg = $"{(user==(Context.User as SocketGuildUser)?"You were":$"{HelperFunctions.NicknameOrUsername(user)} was")} assigned {role.Name}";
+                }
+                await Context.Channel.SendMessageAsync(msg);
             }else{
-                string msg = "Unknown role";
+                msg = "Unknown role";
                 await Context.Channel.SendMessageAsync(msg);
             }
         }
