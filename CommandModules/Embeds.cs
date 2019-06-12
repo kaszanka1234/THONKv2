@@ -45,14 +45,15 @@ namespace THONK.Core.CommandModules {
                 "NO advertising of any kind on our Discord server, This includes links to sites that earn you money. Admins decide what is allowed and what is not. DONT asume anything check with an admin first.",
                 "No rules apply to <#514901753863340054>, aside from 'Don't post any material forbidden by international laws'",
                 " __**IT'S INADVISED TO VIEW <#514901753863340054> IF YOU ARE FAINT-HEARTED**__",
-                "Most warnings will be sent by bot in private messages, having private messages disabled is not an excuse for ignoring them",
-                "You can be kicked from clan if you are qualified as leech"
+                "if you want to view nsfw channels you have to assign yourself nsfw role with /user rank nsfw-role, by doing this you confirm that you know what you are doing",
+                "Most warnings will be sent by bot in private messages, having private messages disabled is not an excuse for ignoring them"
             };
             string[] gRules = {
                 "All rulles that apply to discord also apply to in game chat",
                 "If you are inactive for more than 30 days you can be kicked out of clan, if you can't play for extended period of time contact any officer or higher",
                 "To reach the rank of soldier in clan you have to be at least MR3 and be a member of the clan for at least 5 days, if you are inactive you can be kicked out",
-                "Higher ranks are given by the highest ranked members of the clan as they are needed, don't ask for a higher rank unless you have a good reason for it"
+                "Higher ranks are given by the highest ranked members of the clan as they are needed, don't ask for a higher rank unless you have a good reason for it",
+                "You can be kicked from clan if you are qualified as leech"
             };
 
             string r1, r2 = r1 = "";
