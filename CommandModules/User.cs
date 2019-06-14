@@ -68,11 +68,12 @@ namespace THONK.CommandModules{
         [Command("rank"),Priority(2)]
         public async Task Rank(SocketGuildUser user, string rank){
             var userRequesting = Context.User as SocketGuildUser;
-            // disallow users with rank lower than Lieutenant
-            if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
 
-            // disallow changing roles of users with higher rank
-            if(!userRequesting.HigherThan(user)){await InsufficientPermissionsAsync();return;}
+            if(user==null){
+                user = userRequesting;
+            }else{
+                if(!userRequesting.IsAtLeast("Lieutenant")){await InsufficientPermissionsAsync();return;}
+            }
 
             SocketRole role;
             string name;
@@ -92,11 +93,17 @@ namespace THONK.CommandModules{
             }
 
             // disallow setting roles higher than own
-            if(!userRequesting.IsAtLeast(name)){await InsufficientPermissionsAsync();return;}
+            if(!userRequesting.IsAtLeast(name) && name!="Guest" && userRequesting!=user){await InsufficientPermissionsAsync();return;}
             
             // if passed role is correct clan rank set it as user role
             // and delete any other clan roles
-            if(name != "notfound"){
+            if(name != "notfound"){    
+                // disallow users with rank lower than Lieutenant
+                if(!userRequesting.IsAtLeast("Lieutenant") && name!="Guest" && userRequesting!=user){await InsufficientPermissionsAsync();return;}
+
+                // disallow changing roles of users with higher rank
+                if(!userRequesting.HigherThan(user) && name!="Guest" && userRequesting!=user){await InsufficientPermissionsAsync();return;}
+
                 role = Context.Guild.Roles.Where(x=>x.Name==name).First();
                 SocketRole bef = user.ClanRank();
                 await user.AddRoleAsync(role);
@@ -121,7 +128,7 @@ namespace THONK.CommandModules{
 
         // overload for previous command
         [Command("rank"),Priority(2)]
-        public async Task Rank(string rank,SocketGuildUser user)=>await Rank(user,rank);
+        public async Task Rank(string rank,SocketGuildUser user=null)=>await Rank(user,rank);
 
         // show usage for command
         [Command("rank"),Priority(1)]
@@ -132,11 +139,31 @@ namespace THONK.CommandModules{
         
         // method for setting roles not releated to clan ranks
         private async Task RankOther(SocketGuildUser user, string rank){
-            if(false){
-                // placeholder for setting other roles
-            }else{
-                string msg = "Unknown role";
+            string[] allowedRoles={
+                "nsfw-role"
+            };
+            string msg = "";
+            var builder = new EmbedBuilder();
+            builder.WithAuthor(Context.User);
+            if(allowedRoles.Contains(rank)){
+                var role = Context.Guild.Roles.Where(x=>x.Name.ToLower()==rank).First();
+                if(user.Roles.Contains(role)){
+                    await user.RemoveRoleAsync(role);
+                    msg = $"{(user==(Context.User as SocketGuildUser)?"Your":$"{HelperFunctions.NicknameOrUsername(user)}'s")} {role.Name} role has been removed";
+                    builder.WithDescription($"{HelperFunctions.UserIdentity(user)} had their {role.Mention} removed");
+                }else{
+                    await user.AddRoleAsync(role);
+                    msg = $"{(user==(Context.User as SocketGuildUser)?"You were":$"{HelperFunctions.NicknameOrUsername(user)} was")} assigned {role.Name}";
+                    builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was assigned {role.Mention}");
+                }
                 await Context.Channel.SendMessageAsync(msg);
+            }else{
+                msg = "Unknown role";
+                await Context.Channel.SendMessageAsync(msg);
+                var botLog = _config[Context.Guild.Id].BotLogChannel;
+                if(botLog!=null){
+                    await botLog.SendMessageAsync("",false,builder.Build());
+                }
             }
         }
 
