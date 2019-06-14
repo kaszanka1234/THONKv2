@@ -157,13 +157,14 @@ namespace THONK.CommandModules{
                     builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was assigned {role.Mention}");
                 }
                 await Context.Channel.SendMessageAsync(msg);
-            }else{
-                msg = "Unknown role";
-                await Context.Channel.SendMessageAsync(msg);
                 var botLog = _config[Context.Guild.Id].BotLogChannel;
                 if(botLog!=null){
                     await botLog.SendMessageAsync("",false,builder.Build());
                 }
+            }else{
+                msg = "Unknown role";
+                await Context.Channel.SendMessageAsync(msg);
+                
             }
         }
 
