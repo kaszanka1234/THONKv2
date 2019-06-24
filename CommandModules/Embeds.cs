@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using THONK.utils;
 
 namespace THONK.Core.CommandModules {
-    [Group("embeds"),RequireUserPermission(Discord.GuildPermission.Administrator)]
+    [Group("embeds"),RequireUserPermission(Discord.GuildPermission.Administrator),RequireITWTGuild()]
     public class Embeds : ModuleBase<SocketCommandContext>{
         [Command("rules")]
         public async Task Rules(){
@@ -33,7 +34,7 @@ namespace THONK.Core.CommandModules {
                 "Sending/Linking any harmful material such as viruses, IP grabbers or harmware results in an immediate and permanent ban.",
                 "Use english only in all text channels",
                 "Use proper grammar and spelling and don't spam.",
-                "Usage of excessive extreme innapropriate langauge is prohibited.",
+                "Usage of excessive extreme innapropriate language is prohibited.",
                 "Usage of excessive caps is prohibited",
                 "Mentioning @everyone, the Moderators or a specific person without proper reason is prohibited.",
                 "Don't post someone's personal information without permission.",

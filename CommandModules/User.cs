@@ -10,7 +10,7 @@ using THONK.Extensions.SocketGuildUserExtension;
 using THONK.utils;
 
 namespace THONK.CommandModules{
-    [Group("user")]
+    [Group("user"),RequireITWTGuild()]
     public class User : ModuleBase<SocketCommandContext>{
         
         private readonly IConfig _config;

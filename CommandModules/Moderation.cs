@@ -18,7 +18,7 @@ namespace THONK.CommandModules{
             _config = config;
         }
 
-        [Command("kick"),Priority(2)]
+        [Command("kick"),Priority(2),RequireITWTGuild()]
         public async Task Kick(SocketGuildUser user, params string[] args){
             SocketGuildUser issuer = Context.User as SocketGuildUser;
             if(!issuer.IsAtLeast("General") || !issuer.HigherThan(user)){
@@ -60,14 +60,14 @@ namespace THONK.CommandModules{
             await channel.SendMessageAsync("",false,builder.Build());
         }
         
-        [Command("kick"),Priority(1)]
+        [Command("kick"),Priority(1),RequireITWTGuild()]
         public async Task KickUsage([Remainder]string a = ""){
             string p = _config[Context.Guild.Id].Prefix;
             string msg = $"usage:\n{p}kick @user (optional reason)";
             await Context.Channel.SendMessageAsync(msg);
         }
 
-        [Command("warn"),Priority(2)]
+        [Command("warn"),Priority(12),RequireITWTGuild()]
         public async Task Warn(SocketGuildUser user,string type, [Remainder]string custom = ""){
             SocketGuildUser issuer = Context.User as SocketGuildUser;
             if(!issuer.IsAtLeast("Lieutenant")){
@@ -99,11 +99,20 @@ namespace THONK.CommandModules{
             await channel.SendMessageAsync("",false,builder.Build());
         }
 
-        [Command("warn"),Priority(1)]
+        [Command("warn"),Priority(11),RequireITWTGuild()]
         public async Task WarnUsage([Remainder]string a = ""){
             string p = _config[Context.Guild.Id].Prefix;
             string msg = $"usage:\n{p}warn @user type (custom reason)\ntypes includes inactive, custom\ncustom reason is only used for custom type warnings";
             await Context.Channel.SendMessageAsync(msg);
+        }
+
+        [Command("warn"),Priority(2)]
+        public async Task WarnNoITWT(SocketGuildUser user,string type, [Remainder]string custom = ""){
+            //
+        }
+        [Command("warn"),Priority(1)]
+        public async Task WarnUsageNoITWT([Remainder]string a = ""){
+            //
         }
     }
 }
