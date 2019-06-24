@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using THONK.utils;
 
 namespace THONK.Core.CommandModules {
-    [Group("embeds"),RequireUserPermission(Discord.GuildPermission.Administrator)]
+    [Group("embeds"),RequireUserPermission(Discord.GuildPermission.Administrator),RequireITWTGuild()]
     public class Embeds : ModuleBase<SocketCommandContext>{
         [Command("rules")]
         public async Task Rules(){
