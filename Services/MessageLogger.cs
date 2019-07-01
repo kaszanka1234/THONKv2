@@ -140,8 +140,9 @@ namespace THONK.Services{
             }else{
                 // Get old message contents
                 IMessage msg = cached.Value;
-                // Ignore if the message is empty
+                // Ignore if the message is empty or the message content is identical
                 if(string.IsNullOrEmpty(msg.Content)) return;
+                if(msg.Content == newMessage.Content) return;
 
                 // Append message author and what was edited to embed
                 builder.WithAuthor(newMessage.Author);
