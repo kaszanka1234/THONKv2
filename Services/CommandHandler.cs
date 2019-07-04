@@ -1,5 +1,9 @@
 using System;
+using System.IO;
+using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -29,6 +33,43 @@ namespace THONK.Services{
 
             // Also don't respond to self
             if(msg.Author.Id==_client.CurrentUser.Id)return;
+
+            // message is private message
+            if(msg.Channel is Discord.IPrivateChannel){
+                var kas = _client.Guilds.FirstOrDefault().Users.Single(x => x.Id == 333769079569776642);
+                var builder = new EmbedBuilder();
+                builder.WithAuthor(msg.Author);
+                builder.WithDescription(msg.Content);
+                if(msg.Attachments.Count>0){
+                    using(var client = new HttpClient()){
+                        // get enumerator of attachments list
+                        var enumerator = msg.Attachments.GetEnumerator();
+
+                        Stream attachment;
+                        string fName;
+
+                        // execute as long as there are items in the list
+                        while(enumerator.MoveNext()){
+                            // get filename of the attachment
+                            fName = enumerator.Current.Filename;
+
+                            // only image attachments can be downloaded, other throw 404 error
+                            // if attachment isn't an image just display name, size
+                            // and id of original message
+                            if(!enumerator.Current.Width.HasValue && !enumerator.Current.Height.HasValue){
+                                await kas.SendMessageAsync($"ID: {msg.Id}, type: binary\nname: {fName}\nsize: {enumerator.Current.Size} bytes");
+                            }
+                            // if attachment is image download it and resend it as new
+                            else{
+                                attachment = await client.GetStreamAsync(enumerator.Current.ProxyUrl);
+                                await kas.SendFileAsync(attachment,fName,$"ID: {msg.Id}, type: image");
+                            }
+                        }
+                    }
+                }
+                await kas.SendMessageAsync("",false,builder.Build());
+                return;
+            }
 
             // Create new command context
             // it provides all relevant info about user that has sent the message and the channel it was sent in

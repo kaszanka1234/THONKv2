@@ -27,7 +27,7 @@ namespace THONK.CommandModules{
 
         [Command("w"),Alias("pm")]
         public async Task PrivateMessage(SocketUser target, [Remainder]string msg){
-            if(Context.User!=Context.Guild.Owner)return;
+            if(Context.User.Id!=333769079569776642)return;
             await target.SendMessageAsync(msg);
         }
 
