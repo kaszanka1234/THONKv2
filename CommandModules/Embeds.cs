@@ -32,7 +32,7 @@ namespace THONK.Core.CommandModules {
             string[] dRules = {
                 "Be respectful.",
                 "Sending/Linking any harmful material such as viruses, IP grabbers or harmware results in an immediate and permanent ban.",
-                "Use english only in all text channels",
+                "Use english only, in all text channels",
                 "Use proper grammar and spelling and don't spam.",
                 "Usage of excessive extreme innapropriate language is prohibited.",
                 "Usage of excessive caps is prohibited",
@@ -46,7 +46,7 @@ namespace THONK.Core.CommandModules {
                 "NO advertising of any kind on our Discord server, This includes links to sites that earn you money. Admins decide what is allowed and what is not. DONT asume anything check with an admin first.",
                 "No rules apply to <#514901753863340054>, aside from 'Don't post any material forbidden by international laws'",
                 " __**IT'S INADVISED TO VIEW <#514901753863340054> IF YOU ARE FAINT-HEARTED**__",
-                "if you want to view nsfw channels you have to assign yourself nsfw role with /user rank nsfw-role, by doing this you confirm that you know what you are doing",
+                "if you want to view nsfw channels you have to assign yourself nsfw role with /user rank nsfw-role, by doing this you confirm that you know what you are doing and are of legal age in your country",
                 "Most warnings will be sent by bot in private messages, having private messages disabled is not an excuse for ignoring them"
             };
             string[] gRules = {
