@@ -49,8 +49,6 @@ namespace THONK {
             provider.GetRequiredService<UserLogger>();
             provider.GetRequiredService<Greeter>();
 
-            provider.GetRequiredService<Hmmm>();
-
             // Start the bot and log in
             await provider.GetRequiredService<Start>().StartAsync();
 
@@ -85,7 +83,6 @@ namespace THONK {
             .AddSingleton<MessageLogger>()
             .AddSingleton<UserLogger>()
             .AddSingleton<Greeter>()
-            .AddSingleton<Hmmm>()
             // Add configuration object to the collection
             .AddSingleton(Configuration)
         ;
