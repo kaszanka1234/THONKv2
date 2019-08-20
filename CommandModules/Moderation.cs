@@ -105,14 +105,5 @@ namespace THONK.CommandModules{
             string msg = $"usage:\n{p}warn @user type (custom reason)\ntypes includes inactive, custom\ncustom reason is only used for custom type warnings";
             await Context.Channel.SendMessageAsync(msg);
         }
-
-        [Command("warn"),Priority(2)]
-        public async Task WarnNoITWT(SocketGuildUser user,string type, [Remainder]string custom = ""){
-            //
-        }
-        [Command("warn"),Priority(1)]
-        public async Task WarnUsageNoITWT([Remainder]string a = ""){
-            //
-        }
     }
 }
