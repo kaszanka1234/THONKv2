@@ -22,19 +22,22 @@ namespace THONK.Services {
                 var plainsTime = new PlainsTime();
 
                 // if time changed by more than a minute update the status
-                //
-                // TODO
-                // - make it >1 minute instead of 0 minutes
-                // - add check for >30 seconds
-                if (timeChecked.Minutes != plainsTime.Time.Minutes) {
+                if (timeChecked.Minutes != plainsTime.Time.Minutes || ((timeChecked.TotalMinutes>99 && timeChecked.TotalMinutes<100) || (timeChecked.TotalMinutes>149 && timeChecked.TotalMinutes<150))) {
                     timeChecked = plainsTime.Time;
+                    bool setSubMiunte = false;
                     // parse the data and set correct time as status
                     bool isDay = timeChecked.TotalMinutes <= 100;
-                    int timeToShow = (int)(isDay?100-Math.Floor(timeChecked.TotalMinutes):150-Math.Floor(timeChecked.TotalMinutes));
+                    int timeToShow = (int)(isDay?100-Math.Ceiling(timeChecked.TotalMinutes):150-Math.Ceiling(timeChecked.TotalMinutes));
                     if(timeToShow==0){
-                        await SetPresenceAsync($"<1m to {(!isDay?"day":"night")}");
+                        if(timeChecked.Seconds>30 && !setSubMiunte){
+                            setSubMiunte = true;
+                            await SetPresenceAsync($"<30s to {(!isDay?"day":"night")}");
+                        }else{
+                            await SetPresenceAsync($"<1m to {(!isDay?"day":"night")}");
+                        }
                     }else{
                         await SetPresenceAsync($"{timeToShow}m to {(!isDay?"day":"night")}");
+                        setSubMiunte = false;
                     }
                 }
                 // wait 2.5 seconds before rechecking
