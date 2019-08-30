@@ -8,7 +8,7 @@ using THONK.Configuration;
 using THONK.utils;
 
 namespace THONK.Core.CommandModules {
-    [Group("help")]
+    [Group("help"), Alias("hlep")]
     public class Help : ModuleBase<SocketCommandContext>{
         
         private readonly IConfig _config;
