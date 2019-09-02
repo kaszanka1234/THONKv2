@@ -13,7 +13,7 @@ namespace THONK.Services{
         private string _logFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.log");
 
         public Logging(DiscordSocketClient client, CommandService commands){
-            _logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
+            _logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
             _client = client;
             _commands = commands;
             _client.Log += LogAsync;
