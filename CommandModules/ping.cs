@@ -14,9 +14,5 @@ namespace THONK.Core.CommandModules {
         public async Task Default(){
             await Context.Channel.SendMessageAsync("pong!");
         }
-        [Command("rawr")]
-        public async Task Rawr([Remainder]string s = ""){
-            await Context.Channel.SendMessageAsync($"{Context.User.Mention} rawr");
-        }
     }
 }
