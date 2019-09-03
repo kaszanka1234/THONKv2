@@ -6,21 +6,21 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 namespace THONK.Services{
-    public class Logging{
+    public class Logger{
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private string _logDirectory {get;}
         private string _logFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.log");
 
-        public Logging(DiscordSocketClient client, CommandService commands){
+        public Logger(DiscordSocketClient client, CommandService commands){
             _logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
             _client = client;
             _commands = commands;
-            _client.Log += LogAsync;
+            _client.Log += LogAsyncPrivate;
         }
 
         // Main logging method
-        private Task LogAsync(LogMessage msg){
+        private Task LogAsyncPrivate(LogMessage msg){
             // Create new directory for logs in a file system if it doesn't exist
             if(!Directory.Exists(_logDirectory)){
                 Directory.CreateDirectory(_logDirectory);
@@ -58,6 +58,15 @@ namespace THONK.Services{
             }
             // return Task that logs message to console
             return Console.Out.WriteLineAsync(logging);
+        }
+
+        public async Task LogAsync(LogMessage m){
+            LogMessage msg = new LogMessage(m.Severity,$"(ext){m.Source}",m.Message, m.Exception);
+            await LogAsyncPrivate(msg);
+        }
+
+        public async Task LogAsync(string message, string source = "unspecified", LogSeverity severity = LogSeverity.Info, Exception exception = null){
+            await LogAsyncPrivate(new LogMessage(severity,$"(ext){source}",message,exception));
         }
     }
 }
