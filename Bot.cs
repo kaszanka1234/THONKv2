@@ -42,7 +42,7 @@ namespace THONK {
 
             // Build new service provider and start all services
             var provider = services.BuildServiceProvider();
-            provider.GetRequiredService<Logging>();
+            provider.GetRequiredService<Logger>();
             provider.GetRequiredService<CommandHandler>();
             provider.GetRequiredService<RPUpdater>();
             provider.GetRequiredService<MessageLogger>();
@@ -76,7 +76,7 @@ namespace THONK {
             }))
             // Add the rest of respective services
             .AddSingleton<CommandHandler>()
-            .AddSingleton<Logging>()
+            .AddSingleton<Logger>()
             .AddSingleton<Start>()
             .AddSingleton<RPUpdater>()
             .AddSingleton<ConfigLoader>()
