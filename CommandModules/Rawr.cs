@@ -52,10 +52,10 @@ namespace THONK.CommandModules{
 
         private async Task DoRandRawr(string s){
             SocketGuildUser[] users;
-            if(s=="online"){
-                users = Context.Guild.Users.Where(x => x.Status != UserStatus.Offline).ToArray();
-            }else{
+            if(s=="offline"){
                 users = Context.Guild.Users.ToArray();
+            }else{
+                users = Context.Guild.Users.Where(x => x.Status != UserStatus.Offline).ToArray();
             }
             int rand = random.Next(users.Length);
 
