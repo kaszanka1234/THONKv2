@@ -5,18 +5,21 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using THONK.Services;
 
 namespace THONK.CommandModules{
     public class Rawr : ModuleBase<SocketCommandContext>{
 
+        private readonly Logger _logger;
         static Dictionary<ulong, DateTime> lastRwared = new Dictionary<ulong, DateTime>();
 
         static Random random = new Random((int)(DateTime.UtcNow.Ticks%int.MaxValue));
         int cooldownSec;
 
 
-        public Rawr(){
+        public Rawr(Logger logger){
             cooldownSec = 10*60;
+            _logger = logger;
         }
 
         [Command("rawr")]
@@ -51,14 +54,17 @@ namespace THONK.CommandModules{
         }
 
         private async Task DoRandRawr(string s){
-            SocketGuildUser[] users;
-            if(s=="offline"){
-                users = Context.Guild.Users.ToArray();
-            }else{
-                users = Context.Guild.Users.Where(x => x.Status != UserStatus.Offline).ToArray();
+            List<SocketGuildUser> users;
+            users = new List<SocketGuildUser>();
+            foreach(var user in await Context.Channel.GetUsersAsync(CacheMode.AllowDownload).First()){
+                if(user.Status != UserStatus.Offline){
+                    users.Add(Context.Guild.GetUser(user.Id));
+                }else if(user.Status == UserStatus.Offline && s.ToLower()=="offline"){
+                    users.Add(Context.Guild.GetUser(user.Id));
+                }
             }
-            int rand = random.Next(users.Length);
-
+            int rand = random.Next(users.Count);
+            await _logger.LogAsync($"Counted {users.Count} members in {Context.Channel.Name}","rndRawr",LogSeverity.Verbose);
             await Context.Channel.SendMessageAsync($"{users[rand].Mention} rawr");
         }
     }
