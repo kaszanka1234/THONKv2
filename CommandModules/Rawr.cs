@@ -101,7 +101,7 @@ namespace THONK.CommandModules{
             //if(data==null){
             //    await _logger.LogAsync($"Counted {users.Count} members in {Context.Channel.Name}","rndRawr",LogSeverity.Verbose);
             //}else{
-                await _logger.LogAsync($"selected {data.rand} from {data.count} users ({data.username}) in {data.channel} on {data.server}","rndRawr",LogSeverity.Verbose);
+                await _logger.LogAsync($"selected {data.rand} from {data.count} users ({data.username}) in {data.channel} on {data.server}, added {data.addedCooldown} of cooldown","rndRawr",LogSeverity.Verbose);
             //}
             
             await Context.Channel.SendMessageAsync($"{userToRawr.Mention} rawr");
