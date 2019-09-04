@@ -20,7 +20,7 @@ namespace THONK.CommandModules{
 
         public Rawr(Logger logger){
             cooldownSec = 10*60;
-            maxCooldownOffset = 5*60;
+            maxCooldownOffset = cooldownSec;
             _logger = logger;
         }
 
@@ -29,7 +29,7 @@ namespace THONK.CommandModules{
             await Context.Channel.SendMessageAsync($"{Context.User.Mention} rawr");
         }
 
-       // [Command("random-rawr",true),RequireUserPermission(GuildPermission.MentionEveryone),Priority(11)]
+        [Command("random-rawr",true),RequireUserPermission(GuildPermission.MentionEveryone),Priority(11)]
         public async Task RandomRawr(string s=""){
             await DoRandRawr(s);
         }
