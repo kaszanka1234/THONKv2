@@ -11,14 +11,16 @@ namespace THONK.CommandModules{
     public class Rawr : ModuleBase<SocketCommandContext>{
 
         private readonly Logger _logger;
-        static Dictionary<ulong, DateTime> lastRwared = new Dictionary<ulong, DateTime>();
+        static Dictionary<ulong, DateTime> untilNextRawr = new Dictionary<ulong, DateTime>();
 
         static Random random = new Random((int)(DateTime.UtcNow.Ticks%int.MaxValue));
         int cooldownSec;
+        int maxCooldownOffset;
 
 
         public Rawr(Logger logger){
             cooldownSec = 10*60;
+            maxCooldownOffset = 5*60;
             _logger = logger;
         }
 
@@ -27,7 +29,7 @@ namespace THONK.CommandModules{
             await Context.Channel.SendMessageAsync($"{Context.User.Mention} rawr");
         }
 
-        [Command("random-rawr",true),RequireUserPermission(GuildPermission.MentionEveryone),Priority(11)]
+       // [Command("random-rawr",true),RequireUserPermission(GuildPermission.MentionEveryone),Priority(11)]
         public async Task RandomRawr(string s=""){
             await DoRandRawr(s);
         }
@@ -35,16 +37,16 @@ namespace THONK.CommandModules{
         [Command("random-rawr",true),Priority(1)]
         public async Task RandomRawrUnprivileged(string s=""){
             ulong userId = Context.User.Id;
-            if(lastRwared.ContainsKey(userId)){
-                if(DateTime.UtcNow.CompareTo(lastRwared[userId].AddSeconds(cooldownSec)) > 0){
+            if(untilNextRawr.ContainsKey(userId)){
+                if(DateTime.UtcNow.CompareTo(untilNextRawr[userId]) > 0){
                     // allow
-                    lastRwared[userId] = DateTime.UtcNow;
+                    untilNextRawr[userId] = DateTime.UtcNow.AddSeconds(cooldownSec+random.Next(maxCooldownOffset));
                     await DoRandRawr(s);
                     return;
                 }
             }else{
                 // allow
-                lastRwared.Add(userId, DateTime.UtcNow);
+                untilNextRawr.Add(userId, DateTime.UtcNow.AddSeconds(cooldownSec+random.Next(maxCooldownOffset)));
                 await DoRandRawr(s);
                 return;
             }
