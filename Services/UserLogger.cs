@@ -33,13 +33,20 @@ namespace THONK.Services{
 
         /* TODO
          * test that function
+         * 
+         * idfk should work now still can't test it
          */
         async Task UserUpdated(SocketUser before, SocketUser after){
-            if(before.Username==after.Username)return;
             foreach(var guild in _client.Guilds){
+                var collection = guild.Users.Where(x=>x.Id==before.Id);
+                if(!collection.Any())continue;
+                SocketGuildUser guildUser = collection.First();
+                if(string.IsNullOrEmpty(guildUser.Nickname)){
+                    await guildUser.ModifyAsync(x=> x.Nickname=before.Username);
+                }
+                
                 if(_config[guild.Id].BotLogChannel==null)continue;
                 var channel = _config[guild.Id].BotLogChannel;
-                SocketGuildUser guildUser = guild.Users.Where(x=>x.Id==before.Id).First();
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.LightOrange);
                 builder.WithDescription($"{HelperFunctions.NicknameOrUsername(before as SocketGuildUser)} updated their username");
