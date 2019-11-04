@@ -152,9 +152,14 @@ namespace THONK.CommandModules{
                     msg = $"{(user==(Context.User as SocketGuildUser)?"Your":$"{HelperFunctions.NicknameOrUsername(user)}'s")} {role.Name} role has been removed";
                     builder.WithDescription($"{HelperFunctions.UserIdentity(user)} had their {role.Mention} removed");
                 }else{
-                    await user.AddRoleAsync(role);
-                    msg = $"{(user==(Context.User as SocketGuildUser)?"You were":$"{HelperFunctions.NicknameOrUsername(user)} was")} assigned {role.Name}";
-                    builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was assigned {role.Mention}");
+                    var minorRole = Context.Guild.Roles.Where(x=>x.Name=="minor").First();
+                    if(user.Roles.Contains(minorRole) && role.Name.ToLower()=="nsfw-role"){
+                        msg = ":x: you cannot do this";
+                    }else{
+                        await user.AddRoleAsync(role);
+                        msg = $"{(user==(Context.User as SocketGuildUser)?"You were":$"{HelperFunctions.NicknameOrUsername(user)} was")} assigned {role.Name}";
+                        builder.WithDescription($"{HelperFunctions.UserIdentity(user)} was assigned {role.Mention}");
+                    }
                 }
                 await Context.Channel.SendMessageAsync(msg);
                 var botLog = _config[Context.Guild.Id].BotLogChannel;
