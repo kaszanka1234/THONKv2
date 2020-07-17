@@ -86,7 +86,7 @@ namespace THONK.CommandModules{
         private async Task DoRandRawr(string s, StatisticData data){
             List<SocketGuildUser> users;
             users = new List<SocketGuildUser>();
-            foreach(var user in await Context.Channel.GetUsersAsync(CacheMode.AllowDownload).First()){
+            foreach(var user in await Context.Channel.GetUsersAsync().FirstAsync()){
                 if(user.Status != UserStatus.Offline){
                     users.Add(Context.Guild.GetUser(user.Id));
                 }else if(user.Status == UserStatus.Offline && s.ToLower()=="offline"){

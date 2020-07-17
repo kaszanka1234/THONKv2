@@ -10,14 +10,16 @@ namespace THONK.Database {
         public ulong BotLogChannel { get; set; }
         public ulong LogChannel { get; set; }
     }
-    public class UserRecord {
-        [Key]
-        public ulong Id { get; set; }
-        public int Warnings { get; set; }
-    }
-    public class GuildUsers {
-        [Key]
-        public ulong GuildId { get; set; }
-        public UserRecord Users { get; set; }
-    }
+    
+    // public class UserRecord {
+    //     [Key]
+    //     public ulong Id { get; set; }
+    //     public int Warnings { get; set; }
+    // }
+
+    // public class GuildUsers {
+    //     [Key]
+    //     public ulong GuildId { get; set; }
+    //     public UserRecord Users { get; set; }
+    // }
 }
