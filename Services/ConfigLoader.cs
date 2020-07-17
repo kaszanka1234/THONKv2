@@ -18,8 +18,9 @@ namespace THONK.Services{
         }
 
         
-        private async Task LoadAll(SocketGuild guild){
-            Task.Run(()=>LoadSingle(guild.Id));
+        private Task LoadAll(SocketGuild guild){
+            var task = Task.Run(()=>LoadSingle(guild.Id));
+            return Task.CompletedTask;
         }
 
         /* Load configuration from db */
@@ -36,6 +37,13 @@ namespace THONK.Services{
         public void LoadSingle(ulong guildId){
             /* access db */
             using(var db = new SQLiteDBContext()){
+
+                /*
+                If this throws
+                an exception
+                look in SQLiteDBContext.cs
+                */
+
                 /* load single record */
                 if(db.GuildConfigs.Find(guildId)==null)return;
                 LoadGuild(db.GuildConfigs.Find(guildId));

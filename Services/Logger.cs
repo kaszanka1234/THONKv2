@@ -18,7 +18,9 @@ namespace THONK.Services{
             _client = client;
             _commands = commands;
             _client.Log += LogAsyncPrivate;
-            File.WriteAllBytes(_latestLogFile, new Byte[0]);
+            if(File.Exists(_latestLogFile)){
+                File.WriteAllBytes(_latestLogFile, new Byte[0]);
+            }
         }
 
         // Main logging method

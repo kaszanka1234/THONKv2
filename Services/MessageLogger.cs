@@ -57,7 +57,7 @@ namespace THONK.Services{
 
                 // if message had attachments queue them for logging
                 if(msg.Attachments.Count>0){
-                    Task.Run(()=>QueueDeletedMessagesWithAttachments(msg as SocketUserMessage,channel,messageChannel as SocketTextChannel));
+                    var task = Task.Run(()=>QueueDeletedMessagesWithAttachments(msg as SocketUserMessage,channel,messageChannel as SocketTextChannel));
                     return;
                 }
             }
